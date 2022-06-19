@@ -24,10 +24,15 @@
         $_SESSION["addFilm"]["insert"] = "Невірний формат(VHS,DVD,Blu-Ray)";
         redirect("main.php");
     }
+    if(similarActors($_POST["actors"])){
+        $_SESSION["addFilm"]["insert"] = "В списке акторів є повторення";
+        redirect("main.php");
+    }
     if(checkSimilarFilms($title, $release_year, $format, $_POST["actors"])){
         $_SESSION["addFilm"]["insert"] = "Вже є такий фільм";
         redirect("main.php");
     }
+
 
     //після всіх перевірок
     if(addFilm($title, $release_year, $format, $actors,$message = "insert")){

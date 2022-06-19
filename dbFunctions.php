@@ -90,7 +90,7 @@
                         return false;
                     }
                 }
-                $_SESSION["addFilm"][$message] = "Фільм успішно доданий";
+                //$_SESSION["addFilm"][$message] = "Фільм успішно доданий";
                 return true;
             }
             else{
@@ -173,22 +173,24 @@
     function checkSimilarFilms($title, $release_year, $format, $actors){
         global $db;
         try{
-            $sql = "SELECT film_id FROM films WHERE title = '$title' and format = '$format' and release_year = $release_year;";
+            $sql = "SELECT film_id FROM films WHERE title = '$title' and `format` = '$format' and release_year = $release_year;";
             $result = $db->prepare($sql);
             $result->execute();
-            $id = $result->fetch(PDO::FETCH_ASSOC);
-            if(count($id)>0){
-                $film_id = $id['film_id'];
-                $sql = "Select GROUP_CONCAT(CONCAT(actor_name,' ',actor_lastname)) as actorsName FROM actors WHERE film_id = $film_id;";
-                $result = $db->prepare($sql);
-                $result->execute();
-                $actors_array = $result->fetch(PDO::FETCH_ASSOC);
-                if(strcasecmp($actors,$actors_array['actorsName'])==0){
-                    return true;
-                }
-                else{
-                    return false;
-                }
+            $id = $result->fetchALL(PDO::FETCH_ASSOC);
+            if(isset($id[0]["film_id"])){
+                foreach($id as $i)
+                {
+                    $film_id = $i['film_id'];
+                    $sql = "SELECT GROUP_CONCAT(CONCAT(actor_name,' ',actor_lastname)) as actorsName FROM actors WHERE film_id = $film_id;";
+                    $result = $db->prepare($sql);
+                    $result->execute();
+                    $actors_array = $result->fetch(PDO::FETCH_ASSOC);
+                    $_SESSION["addFilm"]["insert"] = "$actors and ".$actors_array['actorsName'];
+                    if(strcasecmp($actors,$actors_array['actorsName'])==0){
+                        return true;
+                    }
+                }  
+                return false;
             }
             else{
                 return false;
@@ -197,4 +199,12 @@
         catch (PDOException $e) {
             $_SESSION["addFilm"]["insert"] = "Database error: " . $e->getMessage();
         }
+    }
+    function similarActors($actors){
+        $actors = explode(",",str_replace(", ",",",$actors));
+        $actors_unique = array_unique($actors);
+        if($actors==$actors_unique){
+            return false;
+        }
+        return true;
     }

@@ -23,7 +23,7 @@ try{
         FOREIGN KEY (film_id) REFERENCES films(film_id)
     );");
     //створення таблиці users
-    $db->query("CREATE Table Users(
+    $db->query("CREATE Table users(
         user_id int PRIMARY KEY AUTO_INCREMENT,
         login varchar(100) NOT NULL,
         pass varchar(100) NOT NULL,
