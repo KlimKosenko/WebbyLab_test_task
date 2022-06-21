@@ -16,7 +16,7 @@
         $_SESSION["addFilm"]["insert"] = "Введіть коректну дату фільму(>1895,<2023)";
         redirect("main.php");
     }
-    if(!preg_match("/^[а-я А-Я a-z A-Z,-]+$/u",$_POST["actors"])){
+    if(!preg_match("/^[а-я А-Я a-z A-Z,-іІїЇєЄ]+$/u",$_POST["actors"])){
         $_SESSION["addFilm"]["insert"] = "Некоректні символи в полі актор";
         redirect("main.php");
     }
@@ -35,7 +35,7 @@
 
 
     //після всіх перевірок
-    if(addFilm($title, $release_year, $format, $actors,$message = "insert")){
+    if(addFilm(htmlspecialchars($title), $release_year, $format, $actors,$message = "insert")){
         $_SESSION["addFilm"]["insert"] = "Фільм успішно доданий";
         redirect("main.php");
     }

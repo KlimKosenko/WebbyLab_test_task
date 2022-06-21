@@ -4,13 +4,7 @@
     require_once("components/header.php");
     require_once("Pagination.php");
 ?>
-<script>
-function del_Film(id,url){
-	if(confirm("Ви впевнені що хочете видалити фільм?")){
-		document.location.href = 'delFilm.php?web_page='+url+'&id='+id;
-	}
-}
-</script>
+
 <?php
     $title = $_GET['title'];
     $url = $_SERVER['REQUEST_URI'];
@@ -31,7 +25,7 @@ function del_Film(id,url){
                 echo "<td>" . $film["format"] . "</td>";
                 echo "<td>" . $film["release_year"] . "</td>";
                 echo "<td>" . $film["actors"] . "</td>";
-                echo "<td><a href='javascript:del_Film(".$film["film_id"].",\"".$url."\")'>Видалити</a></td>";
+                echo "<td><button onclick='showModal(". $film["film_id"] .",\"".$url."\")'>Видалити</button></td>";
             echo "</tr>";
         }
         echo "</table>";
@@ -39,12 +33,21 @@ function del_Film(id,url){
         if($total>$per_page){
             echo $pagination->get_html();
         }
-        
+        ?>
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p>Ви дійсно хочете видалити цей фільм</p>
+                <button onclick="delFilm()">Так</button>
+                <button onclick="hideModal()">Ні</button>
+            </div>
+        </div>
+      <?php
     }
     else{
         echo "Фільми не знайдено";
     }
     echo "<br>";
     echo "<a href='main.php'>Повернутися</a>";
-    require_once("components/footer.php");
+    require_once("components/footerWithjs.php");
 ?>

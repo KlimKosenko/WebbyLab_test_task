@@ -20,7 +20,11 @@
     <label for="realese_year">Рік випуску</label>
     <input type="number" name="realese_year">
     <label for="format">Формат</label>
-    <input type="text" name="format">
+    <select name="format">
+        <option value = "VHS">VHS</option>
+        <option value = "DVD">DVD</option>
+        <option value = "Blu-Ray">Blu-Ray</option>
+    </select>
     <label for="actors">Актори</label>
     <input type="text" name="actors">
     <button type="submit">Додати фільм</button>

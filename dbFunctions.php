@@ -4,10 +4,10 @@
 
     function registration($login, $pass){
         global $db;
-        $sql = "INSERT INTO users(`login`,pass) Values(:login, :pass)";
+        $sql = "INSERT INTO users(`login`,pass) Values(:login, SHA1(:pass))";
         try{
             $statement = $db->prepare($sql);
-            $statement->bindValue(":login", $login); 
+            $statement->bindValue(":login", $login);
             $statement->bindValue(":pass", $pass);
             $statement->execute();
             if($statement){
@@ -24,9 +24,9 @@
     function login($login, $pass){
         global $db;
         try{
-            $sql = "SELECT * FROM users Where login = :login and pass= :pass";
+            $sql = "SELECT * FROM users Where SHA1(login) = SHA1(:login) and pass = SHA1(:pass)";
             $statement = $db->prepare($sql);
-            $statement->bindValue(":login", $login); 
+            $statement->bindValue(":login", $login);
             $statement->bindValue(":pass", $pass);
             $statement->execute();
             $count = $statement->rowCount();
@@ -185,8 +185,7 @@
                     $result = $db->prepare($sql);
                     $result->execute();
                     $actors_array = $result->fetch(PDO::FETCH_ASSOC);
-                    $_SESSION["addFilm"]["insert"] = "$actors and ".$actors_array['actorsName'];
-                    if(strcasecmp($actors,$actors_array['actorsName'])==0){
+                    if(strcasecmp(str_replace(" ","",$actors),str_replace(" ","",$actors_array['actorsName']))==0){
                         return true;
                     }
                 }  
@@ -201,7 +200,7 @@
         }
     }
     function similarActors($actors){
-        $actors = explode(",",str_replace(", ",",",$actors));
+        $actors = explode(",",str_replace(", ",",",mb_strtolower($actors, 'UTF-8')));
         $actors_unique = array_unique($actors);
         if($actors==$actors_unique){
             return false;

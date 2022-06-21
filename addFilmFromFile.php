@@ -23,6 +23,7 @@
         unset($lines[key($lines)]);
     }
 
+    $addedFilms = 0;
     $film = array();
     foreach($lines as $field){
         if(empty($field)){
@@ -30,15 +31,20 @@
             $release_year = trim($film[1]);
             $format = trim($film[2]);
             $actors = array_filter(explode(",",$film[3]));
+            if(checkSimilarFilms($title, $release_year, $format, $film[3])){
+                continue;
+            }
             if(!addFilm($title, $release_year, $format, $actors)){
                 $_SESSION["addFilm"]["file"] = "Під час додавання фільму виникла помилка";
                 redirect("main.php");
             }
+            $addedFilms +=1;
             $film = array();
             continue;
         }
         array_push($film, str_replace(["Title: ","Release Year: ","Format: ","Stars: "],"",$field));  
     }
-    $_SESSION["addFilm"]["file"] = "Фільми з файлу успішно додані";
+    $_SESSION["addFilm"]["file"] = $addedFilms>0?"Фільми з файлу успішно додані":"Всі фільми з файлу вже є в базі даних";
+    unlink($filename);
     redirect("main.php");
 ?>
