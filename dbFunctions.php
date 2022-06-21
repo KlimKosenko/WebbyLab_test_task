@@ -200,7 +200,7 @@
         }
     }
     function similarActors($actors){
-        $actors = explode(",",str_replace(", ",",",mb_strtolower($actors, 'UTF-8')));
+        $actors = explode(",",str_replace(", ",",",strtolower($actors)));
         $actors_unique = array_unique($actors);
         if($actors==$actors_unique){
             return false;
